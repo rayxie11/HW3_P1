@@ -141,7 +141,7 @@ class CameraCalibrator:
         U,S,V = np.linalg.svd(L)
         # lls solution is the right vector with smallest singular value
         #x = V[:,np.argmin(S)]
-        x = V[:,-1]
+        x = V[-1]
         H = np.reshape(x,(3,3))
         ########## Code ends here ##########
         return H

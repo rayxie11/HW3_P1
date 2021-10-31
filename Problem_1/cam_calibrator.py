@@ -107,7 +107,7 @@ class CameraCalibrator:
         ########## Code starts here ##########
         corner_coordinates = [[],[]]
         x = np.linspace(0,(self.n_corners_x-1)*self.d_square,num=self.n_corners_x)
-        y = np.linspace(0,(self.n_corners_y-1)*self.d_square,num=self.n_corners_y)
+        y = np.linspace((self.n_corners_y-1)*self.d_square,0,num=-self.n_corners_y)
         X, Y = np.meshgrid(y,x)
         X1 = np.hstack(X)
         Y1 = np.hstack(Y)

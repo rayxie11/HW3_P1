@@ -28,13 +28,13 @@ def main():
     
     u_meas, v_meas = cc.getMeasuredPixImageCoord()
     X, Y = cc.genCornerCoordinates(u_meas, v_meas)
-    pdb.set_trace()
+    
     H = []
     for p in range(cc.n_chessboards):
         H.append(cc.estimateHomography(u_meas[p], v_meas[p], X[p], Y[p]))
 
     A = cc.getCameraIntrinsics(H)
-
+    print(A)
     R = []
     t = []
     for p in range(cc.n_chessboards):

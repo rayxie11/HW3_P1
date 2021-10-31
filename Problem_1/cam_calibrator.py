@@ -138,10 +138,10 @@ class CameraCalibrator:
             M_tilde = np.array([x_w,y_w,1])
             L[i,:] = np.concatenate([M_tilde,np.zeros(3),-u*M_tilde])
             L[i+1,:] = np.concatenate([np.zeros(3),M_tilde,-v*M_tilde])
-        U,S,V = np.linalg.svd(L)
+        U,S,Vh = np.linalg.svd(L)
         # lls solution is the right vector with smallest singular value
-        #x = V[:,np.argmin(S)]
-        x = V[:,-1]
+        #       ** V returned is V hermetian, so vectors are actually rows
+        x = Vh[-1]
         H = np.reshape(x,(3,3))
         ########## Code ends here ##########
         return H

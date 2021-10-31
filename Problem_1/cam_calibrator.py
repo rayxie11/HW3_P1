@@ -134,7 +134,7 @@ class CameraCalibrator:
         ########## Code starts here ##########
         # build L
         L = np.zeros( (2*len(u_meas),9) )
-        for (x_w,y_w,u,v,i) in zip(X,Y,u_meas,v_meas,range(0,len(u_meas),2)):
+        for (x_w,y_w,u,v,i) in zip(X,Y,u_meas,v_meas,range(0,2*len(u_meas),2)):
             M_tilde = np.array([x_w,y_w,1])
             L[i,:] = np.concatenate([M_tilde,np.zeros(3),-u*M_tilde])
             L[i+1,:] = np.concatenate([np.zeros(3),M_tilde,-v*M_tilde])

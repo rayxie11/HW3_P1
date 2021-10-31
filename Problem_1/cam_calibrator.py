@@ -108,10 +108,15 @@ class CameraCalibrator:
         corner_coordinates = [[],[]]
         x = np.linspace(0,(self.n_corners_x-1)*self.d_square,num=self.n_corners_x)
         y = np.linspace((self.n_corners_y-1)*self.d_square,0,num=self.n_corners_y)
-        X, Y = np.meshgrid(y,x)
+        X, Y = np.meshgrid(x,y)
         X1 = np.hstack(X)
         Y1 = np.hstack(Y)
-        for k in u_meas:
+        for k in range(len(u_meas)):
+            '''
+            print(u_meas[k])
+            print(v_meas[k])
+            print("one loop")
+            '''
             corner_coordinates[0].append(X1)
             corner_coordinates[1].append(Y1)
         ########## Code ends here ##########
@@ -187,7 +192,9 @@ class CameraCalibrator:
         beta = np.sqrt(lam*b[0]/(b[0]*b[2] - b[1]**2))
         gamma = -b[1]*alpha**2*beta/lam
         u0 = gamma*v0/beta - b[3]*alpha**2/lam
-
+        
+        print(lam)
+        
         A = np.zeros((3,3))
         A[0, :] = [alpha, gamma, u0]
         A[1, 1:] = [beta, v0]

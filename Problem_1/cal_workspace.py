@@ -32,9 +32,19 @@ def main():
     H = []
     for p in range(cc.n_chessboards):
         H.append(cc.estimateHomography(u_meas[p], v_meas[p], X[p], Y[p]))
-
+    
+    '''
+    print("H matrix")
+    print(H)
+    '''
+    
     A = cc.getCameraIntrinsics(H)
+    
+    '''
+    print("A matrix")
     print(A)
+    '''
+    
     R = []
     t = []
     for p in range(cc.n_chessboards):

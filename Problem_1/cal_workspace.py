@@ -25,7 +25,9 @@ def main():
     display_flag = False
 
     cc.loadImages(cal_img_path, name, n_corners, square_length, n_disp_img, display_flag)
-
+    
+    print("changyilong")
+    
     u_meas, v_meas = cc.getMeasuredPixImageCoord()
     X, Y = cc.genCornerCoordinates(u_meas, v_meas)
     pdb.set_trace()

@@ -159,7 +159,33 @@ class CameraCalibrator:
         HINT: What is the size of V?
         """
         ########## Code starts here ##########
+        def getV(H):
+            v12 = np.array([H[0,0]*H[0,1], H[0,0]*H[1,1]+H[1,0]*H[0,1], H[1,0]*H[1,1], H[2,0]*H[0,1]+H[0,0]*H[2,1], H[2,0]*H[1,1]+H[1,0]*H[2,1], H[2,0]*H[2,1]])
+            v11 = np.array([H[0,0]*H[0,0], H[0,0]*H[1,0]+H[1,0]*H[0,0], H[1,0]*H[1,0], H[2,0]*H[0,0]+H[0,0]*H[2,0], H[2,0]*H[1,0]+H[1,0]*H[2,0], H[2,0]*H[2,0]])
+            v22 = np.array([H[0,1]*H[0,1], H[0,1]*H[1,1]+H[1,1]*H[0,1], H[1,1]*H[1,1], H[2,1]*H[0,1]+H[0,1]*H[2,1], H[2,1]*H[1,1]+H[1,1]*H[2,1], H[2,1]*H[2,1]])
 
+            return v12, v11, v22
+
+        V = np.zeros((0,6))
+
+        for h in H:
+            v12, v11, v22 = getV(h)
+            V = np.vstack((V, v12, (v11-v22)))
+
+        _, _, vh = np.linalg.svd(V)
+        b = vh[-1]
+
+        v0 = (b[1]*b[3] - b[0]*b[4])/(b[0]*b[2] - b[1]**2)
+        lam = b[5] - (b[3]**2 + v0*(b[1]*b[3] - b[0]*b[4]))/b[0]
+        alpha = np.sqrt(lam/b[0])
+        beta = np.sqrt(lam*b[0]/(b[0]*b[2] - b[1]**2))
+        gamma = -b[1]*alpha**2*beta/lam
+        u0 = gamma*v0/beta - b[3]*alpha**2/lam
+
+        A = np.zeros((3.3))
+        A[0,:] = [alpha, gamma, u0]
+        A[1, 1:] = [beta, v0]
+        A[2, -1] = 1
         ########## Code ends here ##########
         return A
 

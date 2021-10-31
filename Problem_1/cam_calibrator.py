@@ -162,8 +162,8 @@ class CameraCalibrator:
         def getV(H):
             v = np.zeros((0,6))
             for ij in [[1,2], [1,1], [2,2]]:
-                i = ij[1] - 1
-                j = ij[2] - 1
+                i = ij[0] - 1
+                j = ij[1] - 1
                 vij = np.array([H[0,i]*H[0,j], H[0,i]*H[1,j]+H[1,i]*H[0,j], H[1,i]*H[1,j], H[2,i]*H[0,j]+H[0,i]*H[2,j], H[2,i]*H[1,j]+H[1,i]*H[2,j], H[2,i]*H[2,j]])
                 v = np.vstack((v, vij))
             #v12 = np.array([H[0,0]*H[0,1], H[0,0]*H[1,1]+H[1,0]*H[0,1], H[1,0]*H[1,1], H[2,0]*H[0,1]+H[0,0]*H[2,1], H[2,0]*H[1,1]+H[1,0]*H[2,1], H[2,0]*H[2,1]])

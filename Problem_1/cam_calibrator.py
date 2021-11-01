@@ -112,11 +112,6 @@ class CameraCalibrator:
         X1 = np.hstack(X)
         Y1 = np.hstack(Y)
         for k in range(len(u_meas)):
-            '''
-            print(u_meas[k])
-            print(v_meas[k])
-            print("one loop")
-            '''
             corner_coordinates[0].append(X1)
             corner_coordinates[1].append(Y1)
         ########## Code ends here ##########
@@ -145,7 +140,6 @@ class CameraCalibrator:
             L[i+1,:] = np.concatenate([np.zeros(3),M_tilde,-v*M_tilde])
         U,S,V = np.linalg.svd(L)
         # lls solution is the right vector with smallest singular value
-        #x = V[:,np.argmin(S)]
         x = V[-1]
         H = np.reshape(x,(3,3))
         ########## Code ends here ##########
@@ -171,9 +165,6 @@ class CameraCalibrator:
                 j = ij[1] - 1
                 vij = np.array([H[0,i]*H[0,j], H[0,i]*H[1,j]+H[1,i]*H[0,j], H[1,i]*H[1,j], H[2,i]*H[0,j]+H[0,i]*H[2,j], H[2,i]*H[1,j]+H[1,i]*H[2,j], H[2,i]*H[2,j]])
                 v = np.vstack((v, vij))
-            #v12 = np.array([H[0,0]*H[0,1], H[0,0]*H[1,1]+H[1,0]*H[0,1], H[1,0]*H[1,1], H[2,0]*H[0,1]+H[0,0]*H[2,1], H[2,0]*H[1,1]+H[1,0]*H[2,1], H[2,0]*H[2,1]])
-            #v11 = np.array([H[0,0]*H[0,0], H[0,0]*H[1,0]+H[1,0]*H[0,0], H[1,0]*H[1,0], H[2,0]*H[0,0]+H[0,0]*H[2,0], H[2,0]*H[1,0]+H[1,0]*H[2,0], H[2,0]*H[2,0]])
-            #v22 = np.array([H[0,1]*H[0,1], H[0,1]*H[1,1]+H[1,1]*H[0,1], H[1,1]*H[1,1], H[2,1]*H[0,1]+H[0,1]*H[2,1], H[2,1]*H[1,1]+H[1,1]*H[2,1], H[2,1]*H[2,1]])
 
             return v[0,:], v[1,:], v[2,:]
 
@@ -193,8 +184,6 @@ class CameraCalibrator:
         gamma = -b[1]*alpha**2*beta/lam
         u0 = gamma*v0/beta - b[3]*alpha**2/lam
         
-        # print(lam)
-        
         A = np.zeros((3,3))
         A[0, :] = [alpha, gamma, u0]
         A[1, 1:] = [beta, v0]
@@ -213,20 +202,19 @@ class CameraCalibrator:
         """
         ########## Code starts here ##########
         # get lam
-        lam = 1/np.sqrt((np.dot(np.linalg.inv(A),H[:,0])).dot(np.dot(np.linalg.inv(A),H[:,0])))
-        # lam = 1/np.sqrt((np.dot(np.linalg.inv(A),H[:,1])).dot(np.dot(np.linalg.inv(A),H[:,1])))
+        lam = 1/np.linalg.norm(np.dot(np.linalg.inv(A),H[:,0]))
+        # lam = 1/np.linalg.norm(np.dot(np.linalg.inv(A),H[:,1]))
 
         # get R
-        r1 = lam*np.linalg.inv(A)*H[:,0]
-        r2 = lam*np.linalg.inv(A)*H[:,1]
+        r1 = lam*np.matmul(np.linalg.inv(A),H[:,0])
+        r2 = lam*np.matmul(np.linalg.inv(A),H[:,1])
         r3 = np.cross(r1,r2)
-        Q = np.hstack(r1,r2,r3)
+        Q = np.column_stack((r1,r2,r3))
         U,S,Vh = np.linalg.svd(Q)
-        R = np.dot(U,Vh)
+        R = np.matmul(U,Vh)
 
         # get t
-        t = lam*np.linalg.inv(A)*H[:,2]
-
+        t = lam*np.matmul(np.linalg.inv(A),H[:,2])
         ########## Code ends here ##########
         return R, t
 
@@ -243,6 +231,10 @@ class CameraCalibrator:
 
         """
         ########## Code starts here ##########
+        M_world = np.vstack([X,Y,Z,np.ones(len(X))])
+        M_cam = np.column_stack([R,t]) @ M_world
+        x = M_cam[0]/M_cam[2]
+        y = M_cam[1]/M_cam[2]
 
         ########## Code ends here ##########
         return x, y
@@ -260,6 +252,10 @@ class CameraCalibrator:
             u, v: the coordinates in the ideal pixel image plane
         """
         ########## Code starts here ##########
+        M_world = np.vstack([X,Y,Z,np.ones(len(X))])
+        m_pix  = A @ np.column_stack([R,t]) @ M_world
+        u = m_pix[0]/m_pix[2]
+        v = m_pix[1]/m_pix[2]
 
         ########## Code ends here ##########
         return u, v

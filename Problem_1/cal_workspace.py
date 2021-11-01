@@ -33,17 +33,7 @@ def main():
     for p in range(cc.n_chessboards):
         H.append(cc.estimateHomography(u_meas[p], v_meas[p], X[p], Y[p]))
     
-    '''
-    print("H matrix")
-    print(H)
-    '''
-    
     A = cc.getCameraIntrinsics(H)
-    
-    '''
-    print("A matrix")
-    print(A)
-    '''
     
     R = []
     t = []
@@ -51,7 +41,7 @@ def main():
         Rout, tout = cc.getExtrinsics(H[p],A)
         R.append(Rout)
         t.append(tout)
-
+    
     cc.plotBoardPixImages(u_meas, v_meas, X, Y, R, t, A, n_disp_img)
 
     cc.plotBoardLocations(X, Y, R, t, n_disp_img)

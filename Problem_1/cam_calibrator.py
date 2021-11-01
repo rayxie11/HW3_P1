@@ -193,7 +193,7 @@ class CameraCalibrator:
         gamma = -b[1]*alpha**2*beta/lam
         u0 = gamma*v0/beta - b[3]*alpha**2/lam
         
-        print(lam)
+        # print(lam)
         
         A = np.zeros((3,3))
         A[0, :] = [alpha, gamma, u0]
@@ -212,6 +212,20 @@ class CameraCalibrator:
             t: the translation vector
         """
         ########## Code starts here ##########
+        # get lam
+        lam = 1/np.sqrt((np.dot(np.linalg.inv(A),H[:,0])).dot(np.dot(np.linalg.inv(A),H[:,0])))
+        # lam = 1/np.sqrt((np.dot(np.linalg.inv(A),H[:,1])).dot(np.dot(np.linalg.inv(A),H[:,1])))
+
+        # get R
+        r1 = lam*np.linalg.inv(A)*H[:,0]
+        r2 = lam*np.linalg.inv(A)*H[:,1]
+        r3 = np.cross(r1,r2)
+        Q = np.hstack(r1,r2,r3)
+        U,S,Vh = np.linalg.svd(Q)
+        R = np.dot(U,Vh)
+
+        # get t
+        t = lam*np.linalg.inv(A)*H[:,2]
 
         ########## Code ends here ##########
         return R, t

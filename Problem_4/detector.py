@@ -159,12 +159,16 @@ class Detector:
 
         ########## Code starts here ##########
         # TODO: Compute x, y, z.
-        x = 0.
-        y = 0.
+        x = (u-self.cx)/self.fx
+        y = (v-self.cx)/self.fy
         z = 1.
+        factor=np.sqrt(x**2+y**2+z**2)
+        x_n=x/factor
+        y_n=y/factor
+        z_n=z/factor
         ########## Code ends here ##########
 
-        return x, y, z
+        return x_n, y_n, z_n
 
     def estimate_distance(self, thetaleft, thetaright, ranges):
         """ estimates the distance of an object in between two angles
